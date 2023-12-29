@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/v1/game/stop").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/challenge").hasRole("ADMIN")
                         .requestMatchers(ALLOWED_PATHS).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager

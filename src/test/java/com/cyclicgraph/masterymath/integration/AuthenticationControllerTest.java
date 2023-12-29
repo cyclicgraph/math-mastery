@@ -114,8 +114,6 @@ public class AuthenticationControllerTest extends IntegrationTest {
 
     @Test
     void shouldNotRefreshTokenBecauseNotExistingToken() throws Exception {
-        UserEntity existingUser = testUtils.createUserWithRefreshToken().getKey();
-
         mockMvc.perform(post(REFRESH_PATH).contentType(MediaType.APPLICATION_JSON).content(
                         objectMapper.writeValueAsString(new RefreshTokenRequest(UUID.randomUUID().toString()))))
                 .andExpectAll(

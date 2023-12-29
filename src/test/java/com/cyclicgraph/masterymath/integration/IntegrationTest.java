@@ -7,6 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -20,16 +22,13 @@ import org.testcontainers.junit.jupiter.Container;
 @Transactional
 public abstract class IntegrationTest {
     @Container
-    private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.1")
+    protected static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.1")
             .withDatabaseName("database")
             .withUsername("test")
-            .withPassword("test");
+            .withPassword("test").withExposedPorts(5432);
 
     static {
         postgreSQLContainer.start();
-        System.setProperty("spring.datasource.url", postgreSQLContainer.getJdbcUrl());
-        System.setProperty("spring.datasource.username", postgreSQLContainer.getUsername());
-        System.setProperty("spring.datasource.password", postgreSQLContainer.getPassword());
     }
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
@@ -37,4 +36,11 @@ public abstract class IntegrationTest {
     protected MockMvc mockMvc;
     @Autowired
     protected IntegrationTestUtils testUtils;
+
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry propertyRegistry) {
+        propertyRegistry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+        propertyRegistry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        propertyRegistry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+    }
 }
