@@ -7,6 +7,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,14 +39,19 @@ public class Game {
     @CollectionTable(name = "game_challenge_state", joinColumns = @JoinColumn(name = "game_id"))
     @MapKeyJoinColumn(name = "challenge_id")
     @Column(name = "challenge_state")
+    @Enumerated(EnumType.STRING)
     private Map<Challenge, ChallengeState> challenges = new HashMap<>();
 
-    public Game(UUID id, List<Challenge> challenges) {
+    private boolean rated;
+
+    @ManyToOne
+    private UserEntity user;
+
+    public Game(UUID id, List<Challenge> challenges, boolean rated, UserEntity user) {
         this.id = id;
         this.challenges = challenges.stream()
                 .collect(Collectors.toMap(Function.identity(), challenge -> ChallengeState.NONE));
+        this.rated = rated;
+        this.user = user;
     }
-    
-    @ManyToOne
-    private UserEntity user;
 }

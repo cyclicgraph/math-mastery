@@ -7,7 +7,7 @@ import com.cyclicgraph.masterymath.auth.model.SignInRequest;
 import com.cyclicgraph.masterymath.auth.model.SignUpRequest;
 import com.cyclicgraph.masterymath.auth.repository.RefreshTokenRepository;
 import com.cyclicgraph.masterymath.config.security.JwtService;
-import com.cyclicgraph.masterymath.role.RoleRepository;
+import com.cyclicgraph.masterymath.user.model.Role;
 import com.cyclicgraph.masterymath.user.model.UserEntity;
 import com.cyclicgraph.masterymath.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,11 +32,9 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationProvider authenticationProvider;
-    private final RoleRepository roleRepository;
 
     public Pair<Jwt, RefreshToken> signup(SignUpRequest request) {
-        // role should be present due to logic around application startup
-        UserEntity user = new UserEntity(UUID.randomUUID(), request.username(), passwordEncoder.encode(request.password()), request.email(), Collections.singletonList(roleRepository.findByName("ROLE_USER").get()));
+        UserEntity user = new UserEntity(UUID.randomUUID(), request.username(), passwordEncoder.encode(request.password()), request.email(), List.of(Role.USER));
 
         userRepository.save(user);
         Jwt jwt = jwtService.generateAccessToken(user.getUsername());

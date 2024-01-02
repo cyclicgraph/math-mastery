@@ -3,13 +3,13 @@ package com.cyclicgraph.masterymath.integration;
 import com.cyclicgraph.masterymath.challenge.model.ChallengeMetadata;
 import com.cyclicgraph.masterymath.challenge.model.CreateChallengeRequest;
 import com.cyclicgraph.masterymath.challenge.repository.ChallengeRepository;
+import com.cyclicgraph.masterymath.util.WithMockUserEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.stream.Stream;
 
@@ -48,7 +48,7 @@ class ChallengeControllerTest extends IntegrationTest {
 
     @ParameterizedTest
     @MethodSource("correctCreateChallengeRequests")
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUserEntity(username = "admin", roles = {"ADMIN"})
     void shouldAddChallenge(CreateChallengeRequest request) throws Exception {
         mockMvc.perform(post(CREATE_CHALLENGE_PATH).contentType(MediaType.APPLICATION_JSON).content(
                 objectMapper.writeValueAsString(request))).andExpectAll(
@@ -60,7 +60,7 @@ class ChallengeControllerTest extends IntegrationTest {
 
     @ParameterizedTest
     @MethodSource("incorrectCreateChallengeRequests")
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUserEntity(username = "admin", roles = {"ADMIN"})
     void shouldNotAddChallenge(CreateChallengeRequest request) throws Exception {
         mockMvc.perform(post(CREATE_CHALLENGE_PATH).contentType(MediaType.APPLICATION_JSON).content(
                 objectMapper.writeValueAsString(request))).andExpectAll(
@@ -71,10 +71,10 @@ class ChallengeControllerTest extends IntegrationTest {
     }
 
     @Test
-    @WithMockUser(username = "user")
+    @WithMockUserEntity
     void shouldNotAddChallengeBecauseInsufficientRole() throws Exception {
         mockMvc.perform(post(CREATE_CHALLENGE_PATH).contentType(MediaType.APPLICATION_JSON).content(
-                objectMapper.writeValueAsString(new CreateChallengeRequest("", "", 0, null)))).andExpectAll(
+                objectMapper.writeValueAsString(new CreateChallengeRequest("2+2=", "4", 1000, ChallengeMetadata.ChallengeType.BASIC_OPERATION)))).andExpectAll(
                 status().isForbidden()
         );
 
