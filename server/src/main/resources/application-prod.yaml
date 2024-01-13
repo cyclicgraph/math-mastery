@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+jwt:
+  secret-key: MIIBITANBgkqhkiG9w0BAQEFAAOCAQ4AMIIBCQKCAQBvtxo2K043311mzq4Fw7L3PBTszn0ZpkNC/WJi18U40uVdcQ70Z/p5bUmgrCB0dpv8w+nmfR7C2FD5z7KZsVlL+0sX2rWMlilDvHXADwCJRIE3eY3tNCqG3cNQEQCsqcvrCYjcYebT9lWEgLOpLXT2xuFKTF3ZRAsGvutZ0myTXNTiNu8YCFut+zyxrNSXYLUE3vr2cIJywRe+3CB50Zo2k0QqfU42o4EajxMPC2KnXj8T/xaIFLFdUOpMT6pQfu5B6E4CWxKNYC1+U1UG4stthcNI+LTfJtYQVyanp/+qRfXtjsx9anyXZTqKNXm7aFLTfNVSSU14LDJaK41UuXYvAgMBAAE=
+  access:
+    expiration:
+      seconds: 1200
+  refresh:
+    expiration:
+      seconds: 28_800
