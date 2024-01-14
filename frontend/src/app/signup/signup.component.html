@@ -1,1 +1,37 @@
-<p>signup works!</p>
+<div class="container">
+    <h1 class="signupP">Signup</h1>
+
+    <form [formGroup]="form" (ngSubmit)="signup()">
+        <p>Username</p>
+        <p>
+            <mat-form-field appearance="fill" [class.invalid-field]="username!.invalid && username!.touched">
+                <input matInput formControlName="username">
+                <mat-icon matSuffix>account_circle</mat-icon>
+                <mat-hint>Choose a unique username</mat-hint>
+            </mat-form-field>
+        </p>
+
+        <p>Email</p>
+        <p>
+            <mat-form-field appearance="outline" [class.invalid-field]="email!.invalid && email!.touched">
+                <input matInput formControlName="email" type="email">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-hint>Use a valid email address</mat-hint>
+            </mat-form-field>
+        </p>
+
+        <p>Password</p>
+        <p>
+            <mat-form-field appearance="fill" [class.invalid-field]="password!.invalid && password!.touched">
+                <input matInput formControlName="password" [type]="hide ? 'password' : 'text'">
+                <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                <mat-hint>Minimum 8 characters</mat-hint>
+            </mat-form-field>
+        </p>
+        <div class="button-container">
+            <button class="signup-button" mat-raised-button color="primary" type="signup()"
+                [disabled]="form.invalid">Sign Up</button>
+        </div>
+    </form>
+    <p>{{errorText}}</p>
+</div>

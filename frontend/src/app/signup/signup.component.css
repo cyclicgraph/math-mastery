@@ -1,0 +1,39 @@
+.container {
+  flex-direction: column;
+  align-items: center;
+  margin-left: 35%;
+  width: 30%;
+  display: flex;
+  padding-top: 2%;
+}
+
+form {
+  margin: auto;
+}
+
+p {
+  font-weight: bold;
+}
+
+.signupP {
+  margin-bottom: 7%;
+  font-size: 40px;
+}
+
+.invalid-field .mat-form-field-underline .mat-form-field-ripple {
+  background-color: red;
+}
+
+.invalid-field .mat-form-field-label {
+  color: red;
+}
+
+.mat-form-field {
+  height: 5px
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
