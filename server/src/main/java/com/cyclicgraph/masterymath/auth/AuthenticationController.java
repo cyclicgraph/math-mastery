@@ -11,12 +11,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @RestController
@@ -28,9 +32,12 @@ public class AuthenticationController {
     @PostMapping(value = "/signup")
     public ResponseEntity<Jwt> signup(HttpServletResponse response, @RequestBody @Valid SignUpRequest request) {
         Pair<Jwt, RefreshToken> signup = authenticationService.signup(request);
-        addRefreshTookenCookie(response, signup.getRight());
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", signup.getRight().getToken().toString()).httpOnly(true).secure(true).path("/")
+                .maxAge(ChronoUnit.SECONDS.between(LocalDateTime.now(), LocalDateTime.now().plusYears(1))).httpOnly(false).build(); // may not be precise
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return ResponseEntity.ok(signup.getLeft());
+        return ResponseEntity.ok().headers(headers).body(signup.getLeft());
     }
 
     @PostMapping(value = "/signin")

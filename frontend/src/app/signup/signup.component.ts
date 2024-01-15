@@ -23,7 +23,6 @@ export class SignupComponent {
   errorText = "";
 
   constructor(private authService: AuthService, private router: Router) {
-    this.authService = authService;
     this.form = new FormGroup({
       username: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
@@ -54,6 +53,9 @@ export class SignupComponent {
       password: this.form.get('password')!.value
     }).subscribe({
       next: (v) => {
+        localStorage.setItem('accessToken', v.body!.token);
+        localStorage.setItem('expiresAt', v.body!.expiration);
+
         this.errorText = "";
         this.router.navigate(['/']);
       },
