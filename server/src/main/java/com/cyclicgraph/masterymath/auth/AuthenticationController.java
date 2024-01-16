@@ -6,7 +6,6 @@ import com.cyclicgraph.masterymath.auth.model.RefreshTokenRequest;
 import com.cyclicgraph.masterymath.auth.model.SignInRequest;
 import com.cyclicgraph.masterymath.auth.model.SignUpRequest;
 import com.cyclicgraph.masterymath.auth.service.AuthenticationService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,20 +30,15 @@ public class AuthenticationController {
     @PostMapping(value = "/signup")
     public ResponseEntity<Jwt> signup(HttpServletResponse response, @RequestBody @Valid SignUpRequest request) {
         Pair<Jwt, RefreshToken> signup = authenticationService.signup(request);
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", signup.getRight().getToken().toString()).httpOnly(true).secure(true).path("/")
-                .maxAge(ChronoUnit.SECONDS.between(LocalDateTime.now(), LocalDateTime.now().plusYears(1))).httpOnly(false).build(); // may not be precise
-        HttpHeaders headers = new HttpHeaders();
-        headers.set(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return ResponseEntity.ok().headers(headers).body(signup.getLeft());
+        return buildResponse(signup);
     }
 
     @PostMapping(value = "/signin")
-    public ResponseEntity<Jwt> signup(HttpServletResponse response, @RequestBody @Valid SignInRequest request) {
+    public ResponseEntity<Jwt> signin(HttpServletResponse response, @RequestBody @Valid SignInRequest request) {
         Pair<Jwt, RefreshToken> signin = authenticationService.signin(request);
-        addRefreshTookenCookie(response, signin.getRight());
 
-        return ResponseEntity.ok(signin.getLeft());
+        return buildResponse(signin);
     }
 
     @PostMapping(value = "/refresh")
@@ -53,12 +46,18 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.refresh(request));
     }
 
+    private ResponseEntity<Jwt> buildResponse(Pair<Jwt, RefreshToken> signin) {
+        HttpHeaders headers = buildCookie(signin);
 
-    private void addRefreshTookenCookie(HttpServletResponse response, RefreshToken refreshToken) {
-        Cookie refreshTokenCookie = new Cookie("refresh_token", String.valueOf(refreshToken.getToken()));
-        // not very accurate...
-        refreshTokenCookie.setMaxAge((int) ((refreshToken.getExpires() - new Date().getTime()) / 1000));
-        response.addCookie(refreshTokenCookie);
+        return ResponseEntity.ok().headers(headers).body(signin.getLeft());
     }
 
+    private HttpHeaders buildCookie(Pair<Jwt, RefreshToken> signin) {
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", signin.getRight().getToken().toString()).httpOnly(true).secure(true).path("/")
+                .maxAge(ChronoUnit.SECONDS.between(LocalDateTime.now(), LocalDateTime.now().plusYears(1))).httpOnly(false).build(); // may not be precise
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return headers;
+    }
 }

@@ -1,22 +1,15 @@
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatHint } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { AuthResponse, AuthService } from '../services/auth.service';
-import { Observable } from 'rxjs';
-import { routes } from '../app-routing.module';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
-  selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class SignupComponent {
+export class LoginComponent {
+  // this component is very similar to SignupComponent - I wonder if its possible to share some code between them
   hide = true;
   buttonDisabled = true;
   form: FormGroup;
@@ -25,8 +18,7 @@ export class SignupComponent {
   constructor(private authService: AuthService, private router: Router) {
     this.form = new FormGroup({
       username: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
-      password: new FormControl('', [Validators.required, Validators.minLength(8)])
+      password: new FormControl('', [Validators.required])
     });
 
     this.form.valueChanges.subscribe(() => {
@@ -38,20 +30,15 @@ export class SignupComponent {
     return this.form.get('username');
   }
 
-  get email() {
-    return this.form.get('email');
-  }
-
   get password() {
     return this.form.get('password');
   }
 
-  signup() {
+  login() {
     this.errorText = "";
 
-    this.authService.signup({
+    this.authService.login({
       username: this.form.get('username')!.value,
-      email: this.form.get('email')!.value,
       password: this.form.get('password')!.value
     }).subscribe({
       next: (v) => {
