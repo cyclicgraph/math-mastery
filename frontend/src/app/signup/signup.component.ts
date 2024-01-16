@@ -6,7 +6,7 @@ import { MatHint } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { AuthResponse, AuthService } from '../auth.service';
+import { AuthResponse, AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 import { routes } from '../app-routing.module';
 import { Router } from '@angular/router';
