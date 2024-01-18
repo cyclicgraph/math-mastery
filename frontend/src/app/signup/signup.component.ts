@@ -48,15 +48,17 @@ export class SignupComponent {
 
   signup() {
     this.errorText = "";
+    var username = this.form.get('username')!.value;
 
     this.authService.signup({
-      username: this.form.get('username')!.value,
+      username: username,
       email: this.form.get('email')!.value,
       password: this.form.get('password')!.value
     }).subscribe({
       next: (v) => {
         localStorage.setItem('accessToken', v.body!.token);
         localStorage.setItem('expiresAt', v.body!.expiration);
+        localStorage.setItem('username', username);
 
         this.errorText = "";
         this.router.navigate(['/']);

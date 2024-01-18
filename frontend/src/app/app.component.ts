@@ -19,4 +19,8 @@ export class AppComponent {
 
     return expirationDate > new Date();
   }
+
+  getUsername(): string {
+    return localStorage.getItem('username')!;
+  }
 }
