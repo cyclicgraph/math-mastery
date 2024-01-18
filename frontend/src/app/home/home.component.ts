@@ -7,12 +7,14 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-   text: string = "Hello!";
-
+  text: string = "Hello!";
+  isAuthenticated = false;
+  
   constructor(private userService: UserService) {
     this.userService.me().subscribe({
       next: (v) => {
         this.text = "Hello " + v.body?.username;
+        this.isAuthenticated = true;
       }
     });
 

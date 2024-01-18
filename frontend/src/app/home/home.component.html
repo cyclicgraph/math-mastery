@@ -1,1 +1,44 @@
 <p>{{text}}</p>
+
+<div class="games-container" *ngIf="isAuthenticated">
+    <div class="left-game">
+        <div class="elo-div">Your rating: 1000</div>
+        <div class="game-name-div">Against another player</div>
+        <div class="button-div">
+            <button mat-raised-button color="primary">Start</button>
+        </div>
+        <div class="game-options-div"></div>
+    </div>
+    <div class="center-game" [ngStyle]="{'background-color': 'primaryColor'}">
+        <div class="elo-div">Your rating: 1000</div>
+        <div class="game-name-div">Singleplayer</div>
+        <div class="button-div">
+            <button mat-raised-button color="primary">Start</button>
+        </div>
+        <div class="game-options-div">
+            <div class="ranked-div">
+                <p>Ranked:</p>
+                <mat-slide-toggle [checked]="true" color="primary"></mat-slide-toggle>
+            </div>
+            <p>Number of questions: 5</p>
+            <div class="level-div">
+                <p>Level:</p>
+                <div class="select-container">
+                    <select>
+                        <option value="avg">Average</option>
+                        <option value="below">Below elo (-200)</option>
+                        <option value="above">Above elo (+200)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="right-game">
+        <div class="elo-div">Your rating: 1000</div>
+        <div class="game-name-div">TODO</div>
+        <div class="button-div">
+            <button mat-raised-button color="primary">Start</button>
+        </div>
+        <div class="game-options-div"></div>
+    </div>
+</div>
