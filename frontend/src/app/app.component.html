@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
     <span>Math Mastery</span>
     <a mat-button routerLink="/">Home</a>
-    <a mat-button routerLink="/signup">Signup</a>
-    <a mat-button routerLink="/login">Login</a>
+    <a mat-button routerLink="/signup" *ngIf="!isAuthenticated()">Signup</a>
+    <a mat-button routerLink="/login" *ngIf="!isAuthenticated()">Login</a>
 </mat-toolbar>
 <router-outlet></router-outlet>

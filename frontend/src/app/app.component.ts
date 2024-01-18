@@ -10,4 +10,13 @@ import { MatInputModule } from '@angular/material/input';
 export class AppComponent {
   title = 'math-mastery';
 
+  isAuthenticated(): boolean {
+    var expiresAt = localStorage.getItem('expiresAt');
+    var accessToken = localStorage.getItem('accessToken');
+
+    if (expiresAt == null || expiresAt.trim() == '' || accessToken == null || accessToken.trim() == '') return false;
+    const expirationDate = new Date(expiresAt);
+
+    return expirationDate > new Date();
+  }
 }

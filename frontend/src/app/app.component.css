@@ -1,11 +1,26 @@
 .mat-toolbar {
   display: flex;
+  align-items: center;
   justify-content: flex-start;
 }
 
-.mat-toolbar span,
-.mat-toolbar a {
-  margin-right: 25%;
+.mat-toolbar span {
+  margin-right: 20px;
+  font-size: 1.1em;
+  font-weight: 500;
 }
 
-.spacer {}
+.mat-toolbar a {
+  font-size: 1em;
+  text-decoration: none;
+  transition: color 0.3s;
+  color: inherit;
+}
+
+.mat-toolbar a[routerLink="/signup"] {
+  margin-left: auto;
+}
+
+.mat-toolbar a:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
