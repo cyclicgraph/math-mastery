@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { ChallengeView, GameService, StartGameResponse } from '../services/game.service';
+import { AnswerRequestEntry, ChallengeView, GameService, StartGameResponse } from '../services/game.service';
 import { Subscription, switchMap } from 'rxjs';
+import md5Hex from 'md5-hex';
 
 @Component({
   selector: 'app-play',
@@ -16,6 +17,13 @@ export class PlayComponent implements AfterViewInit {
   gameId?: string;
   challenges: ChallengeView[] = [];
   currentQuestion = "";
+  currentChallenge: ChallengeView | null = null;
+  currentChallengeIndex = -1;
+  answers: AnswerRequestEntry[] = [];
+
+  // first initialization won't be needed
+  questionDisplayedDate = new Date();
+  questionAnsweredDate = new Date();
 
   private subscription = new Subscription();
 
@@ -34,7 +42,7 @@ export class PlayComponent implements AfterViewInit {
         this.challenges =
           v.body!.challenges
 
-        this.currentQuestion = this.challenges[0].texCode;
+        this.showNextQuestion();
       },
       error: v => this.handleError(v)
     });
@@ -54,22 +62,26 @@ export class PlayComponent implements AfterViewInit {
     this.answerInput!.nativeElement.disabled = true;
 
     const interval = setInterval(() => {
-
       if (this.counter <= 0) {
         clearInterval(interval);
       }
 
       if (this.counter == 1) {
+        this.questionDisplayedDate = new Date();
         this.counterDiv!.nativeElement.style.display = "none";
       }
       this.counter--;
-    }, 500);
+    }, 111);
 
     this.addInputHandler();
   }
 
   addInputHandler() {
     document.addEventListener('keydown', (event: KeyboardEvent) => {
+      console.log(this.counter);
+      if (this.counter > 0) return;
+
+      this.questionAnsweredDate = new Date();
       var isNumber = /^\d$/;
       var isBackspace = event.key == 'Backspace';
       let value = this.answerInput!.nativeElement.value;
@@ -78,12 +90,55 @@ export class PlayComponent implements AfterViewInit {
         value = value.substring(0, value.length - 1);
 
         this.answerInput!.nativeElement.value = value;
+        // was tested before, return
+        return;
       } else if (value.length < this.MAX_DIGITS && isNumber.test(event.key)) {
         this.answerInput!.nativeElement.value += event.key;
+      } else {
+        // value was not changed so it was tested before
+        return;
       }
+
+      this.testAnswer(this.answerInput!.nativeElement.value);
     });
   }
 
+  testAnswer(value: string) {
+    let isCorrect = md5Hex(value) == this.currentChallenge?.hashedAnswer;
+    console.log(isCorrect);
+
+    if (isCorrect) {
+      // save in history
+      var secondsToAnswer = (this.questionAnsweredDate.getTime() - this.questionDisplayedDate.getTime()) / 1000;
+      this.answers.push({
+        "answer": value,
+        "challengeId": this.currentChallenge!.id,
+        "seconds": secondsToAnswer
+      });
+
+      // if it was last question, send answers to backend
+      if (this.challenges.length - 1 == this.currentChallengeIndex) {
+        this._gameService.answer({
+          "answers": this.answers,
+          "gameId": this.gameId!
+        }).subscribe({
+          next: value => {
+            console.log(value.body);
+          }
+        });
+      } else {
+        this.showNextQuestion();
+      }
+    }
+  }
+
+  showNextQuestion() {
+    this.currentChallengeIndex++;
+    this.currentChallenge = this.challenges[this.currentChallengeIndex];
+    this.answerInput!.nativeElement.value = '';
+    this.currentQuestion = this.currentChallenge.texCode;
+    this.questionDisplayedDate = new Date();
+  }
 }
 
 

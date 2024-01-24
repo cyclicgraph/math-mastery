@@ -26,7 +26,7 @@ export class GameService {
   }
 
   answer(request: AnswerRequest) {
-    return this.client.put<AnswerResponse>(this.challengesUrl + "?gameId=", request, {
+    return this.client.put<AnswerResponse>(this.answerUrl, request, {
       observe: 'response', withCredentials: true
     });
 
