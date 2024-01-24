@@ -1,0 +1,46 @@
+.counter-div {
+    display: flex;
+    justify-content: center;
+    padding-top: 20vh;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.counter-text {
+    font-size: 11em;
+}
+
+.main-container {
+    margin-top: 10%;
+}
+
+.question,
+.answer {
+    font-size: 9vh;
+}
+
+.answer {
+    text-align: start;
+    padding: 0;
+    margin: 0;
+    width: 15vh;
+}
+
+.question {
+    text-align: end;
+    padding-top: 5vh;
+    margin: 0;
+    width: 15vh;
+}
+
+.question p {
+    color: black;
+}
+
+.answer input {
+    color: black;
+    caret-color: transparent;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}

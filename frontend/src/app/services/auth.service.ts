@@ -8,8 +8,7 @@ import { CookieService } from 'ngx-cookie-service';
   providedIn: 'root'
 })
 export class AuthService {
-  baseUrl = environment.apiUrl;
-  authUrl = this.baseUrl + "/api/v1/auth";
+  authUrl = environment.apiUrl + "/api/v1/auth";
   signupUrl = this.authUrl + "/signup";
   signinUrl = this.authUrl + "/signin";
   refreshUrl = this.authUrl + "/refresh";
