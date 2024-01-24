@@ -17,6 +17,7 @@ import { LoginComponent } from './login/login.component';
 import { PlayComponent } from './play/play.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MatSelectModule } from '@angular/material/select';
     MatToolbarModule,
     MatSlideToggleModule,
     ReactiveFormsModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTableModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

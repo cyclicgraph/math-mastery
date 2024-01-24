@@ -1,9 +1,9 @@
 <div>
-    <div class="counter-div" #div>
+    <div class="counter-div" [style.display]="counter < 1 ? 'none' : ''" #div>
         <span class="counter-text" #counterText>{{counter}}</span>
     </div>
 
-    <div class="container main-container">
+    <div class="container main-container" *ngIf="!answerResponse">
         <div class="row">
             <div class="col question">
                 <p>
@@ -15,4 +15,51 @@
             </div>
         </div>
     </div>
+
+
+    <div class="container summary-div" *ngIf="answerResponse">
+        <h3>Game Summary (Game ID: {{ answerResponse.gameId }})</h3>
+        <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="challengeId">
+                <mat-header-cell *matHeaderCellDef> Challenge ID </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.challengeId}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="correct">
+                <mat-header-cell *matHeaderCellDef> Correct </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.correct ? 'Yes' : 'No'}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ratingGain">
+                <mat-header-cell *matHeaderCellDef> Rating Gain/Loss </mat-header-cell>
+                <mat-cell *matCellDef="let element"
+                    [ngClass]="{'positive': element.ratingGain > 0, 'negative': element.ratingGain < 0}">
+                    {{element.ratingGain}}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="challengeIdFooter">
+                <mat-footer-cell *matFooterCellDef>Total Gain/Loss: </mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="empty">
+                <mat-footer-cell *matFooterCellDef> </mat-footer-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="ratingGainFooter">
+                <mat-footer-cell *matFooterCellDef
+                    [ngClass]="{'positive': answerResponse.ratingGain > 0, 'negative': answerResponse.ratingGain < 0}">
+                    {{ answerResponse.ratingGain }}
+                </mat-footer-cell>
+            </ng-container>
+
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            <mat-footer-row *matFooterRowDef="['challengeIdFooter', 'empty', 'ratingGainFooter']">
+            </mat-footer-row>
+        </mat-table>
+    </div>
+
 </div>

@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
-import { AnswerRequestEntry, ChallengeView, GameService, StartGameResponse } from '../services/game.service';
+import { AnswerRequestEntry, AnswerResponse, AnswerResponseEntry, ChallengeView, GameService, StartGameResponse } from '../services/game.service';
 import { Subscription, switchMap } from 'rxjs';
 import md5Hex from 'md5-hex';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-play',
@@ -20,6 +21,9 @@ export class PlayComponent implements AfterViewInit {
   currentChallenge: ChallengeView | null = null;
   currentChallengeIndex = -1;
   answers: AnswerRequestEntry[] = [];
+  answerResponse: AnswerResponse | null = null;
+  dataSource = new MatTableDataSource<AnswerResponseEntry>([]);
+  displayedColumns: string[] = ['challengeId', 'correct', 'ratingGain'];
 
   // first initialization won't be needed
   questionDisplayedDate = new Date();
@@ -68,18 +72,16 @@ export class PlayComponent implements AfterViewInit {
 
       if (this.counter == 1) {
         this.questionDisplayedDate = new Date();
-        this.counterDiv!.nativeElement.style.display = "none";
       }
       this.counter--;
-    }, 111);
+    }, 500);
 
     this.addInputHandler();
   }
 
   addInputHandler() {
     document.addEventListener('keydown', (event: KeyboardEvent) => {
-      console.log(this.counter);
-      if (this.counter > 0) return;
+      if (this.counter > 0 || this.answerResponse) return;
 
       this.questionAnsweredDate = new Date();
       var isNumber = /^\d$/;
@@ -93,6 +95,8 @@ export class PlayComponent implements AfterViewInit {
         // was tested before, return
         return;
       } else if (value.length < this.MAX_DIGITS && isNumber.test(event.key)) {
+        // problem is that this can't be seen even for single second, when it's last digit of answer
+        // don't really know why, if js function and view priority or what
         this.answerInput!.nativeElement.value += event.key;
       } else {
         // value was not changed so it was tested before
@@ -123,7 +127,8 @@ export class PlayComponent implements AfterViewInit {
           "gameId": this.gameId!
         }).subscribe({
           next: value => {
-            console.log(value.body);
+            this.answerResponse = value.body;
+            this.dataSource!.data = this.answerResponse!.entries;
           }
         });
       } else {
@@ -141,4 +146,8 @@ export class PlayComponent implements AfterViewInit {
   }
 }
 
+
+function sleep(arg0: number) {
+  throw new Error('Function not implemented.');
+}
 
